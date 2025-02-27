@@ -32,6 +32,21 @@ function changeGameState(_State,_Arg)
 end
 
 function love.load()
+    -- Set up things to be pixelated
+    love.graphics.setDefaultFilter("nearest", "nearest", 1)
+    love.graphics.setLineStyle("rough")
+
+    -- Canvas setup
+    globalCanvasWidth,globalCanvasHeight = 320,180
+    globalCanvas = love.graphics.newCanvas(canvasWidth,canvasHeight)
+    screenLib.checkOfsets(globalCanvasWidth,globalCanvasHeight)
+
+    -- more pixelated
+    globalCanvas:setFilter("nearest","nearest")
+
+    --Resizeable window:
+    love.window.setMode(globalCanvasWidth*3,globalCanvasHeight*3,{resizable = true, msaa = 1})
+
     changeGameState("main")
 end
 
@@ -40,7 +55,16 @@ function love.update(dt)
 end
 
 function love.draw()
+    love.graphics.setCanvas(globalCanvas)
+    love.graphics.clear()
+
     currentGameState.draw()
+
+    love.graphics.setCanvas()
+
+    screenLib.setScreen(globalCanvasWidth,globalCanvasHeight)
+    love.graphics.draw(globalCanvas)
+    screenLib.createBorder()
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
